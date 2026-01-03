@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DESPEX | Finance Intelligence</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        dark: '#0F1117',
+                        navy: '#161B22',
+                        slate: '#21262D',
+                        brand: '#39B881',
+                        expense: '#FF5A5F',
+                        accent: '#4D96FF'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+
+        body {
+            background-color: #0F1117;
+            color: #E6EDF3;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        .glass {
+            background: rgba(22, 27, 34, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-hover:hover {
+            transform: translateY(-5px);
+            border-color: rgba(57, 184, 129, 0.4);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #30363D; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #39B881; }
+
+        .nav-link.active {
+            background: linear-gradient(90deg, rgba(57, 184, 129, 0.15) 0%, rgba(57, 184, 129, 0) 100%);
+            border-left: 3px solid #39B881;
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="flex h-screen overflow-hidden">
+
+    <aside class="w-64 glass border-r border-slate flex flex-col z-20">
+        <div class="p-8">
+            <div class="flex items-center gap-3 group cursor-default">
+                <div class="bg-brand/20 p-2 rounded-xl text-brand group-hover:scale-110 transition-transform">
+                    <i data-lucide="shield-check"></i>
+                </div>
+                <h1 class="text-xl font-extrabold tracking-tighter uppercase">Despex</h1>
+            </div>
+        </div>
+
+        <nav id="main-nav" class="flex-1 px-4 space-y-1">
+            <a href="#" data-tab="dashboard" class="nav-link active flex items-center gap-3 p-3 rounded-lg transition-all group">
+                <i data-lucide="layout-grid" class="w-5 h-5 group-hover:text-brand"></i>
+                <span class="text-sm font-semibold">Dashboard</span>
+            </a>
+            <a href="#" data-tab="reports" class="nav-link flex items-center gap-3 p-3 rounded-lg transition-all group">
+                <i data-lucide="bar-chart-3" class="w-5 h-5 group-hover:text-brand"></i>
+                <span class="text-sm font-semibold">Análises</span>
+            </a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-8 custom-scrollbar relative">
+
+        <div id="tab-dashboard" class="tab-content space-y-10">
+            <header class="flex justify-between items-center">
+                <div>
+                    <h2 class="text-3xl font-extrabold">Visão Geral</h2>
+                    <p class="text-gray-500 text-sm">Bem-vindo ao seu centro de inteligência financeira.</p>
+                </div>
+                <div class="text-right">
+                    <span id="current-date" class="text-xs font-bold text-gray-500 uppercase tracking-widest"></span>
+                </div>
+            </header>
+
+            <section class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="glass p-6 rounded-3xl card-hover relative group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 text-xs font-bold uppercase mb-1">Receitas</p>
+                            <h3 id="kpi-entrada" class="text-3xl font-black">R$ 0,00</h3>
+                        </div>
+                        <div class="bg-brand/10 p-4 rounded-2xl text-brand group-hover:bg-brand group-hover:text-dark transition-colors">
+                            <i data-lucide="arrow-up-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass p-6 rounded-3xl card-hover relative group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 text-xs font-bold uppercase mb-1">Despesas</p>
+                            <h3 id="kpi-saida" class="text-3xl font-black text-expense">R$ 0,00</h3>
+                        </div>
+                        <div class="bg-expense/10 p-4 rounded-2xl text-expense group-hover:bg-expense group-hover:text-white transition-colors">
+                            <i data-lucide="arrow-down-right"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass p-6 rounded-3xl card-hover relative group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <p class="text-gray-400 text-xs font-bold uppercase mb-1">Saldo Líquido</p>
+                            <h3 id="kpi-saldo" class="text-3xl font-black text-accent">R$ 0,00</h3>
+                        </div>
+                        <div class="bg-accent/10 p-4 rounded-2xl text-accent group-hover:bg-accent group-hover:text-white transition-colors">
+                            <i data-lucide="banknote"></i>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                <div class="lg:col-span-1 glass p-8 rounded-3xl space-y-6">
+                    <h4 class="font-bold flex items-center gap-2">
+                        <i data-lucide="plus-circle" class="text-brand w-5 h-5"></i> Novo Lançamento
+                    </h4>
+                    <form id="finance-form" class="space-y-4">
+                        <input type="text" id="desc" class="w-full bg-dark/50 border border-slate rounded-xl p-3 focus:border-brand outline-none text-sm" placeholder="Descrição" required>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input type="number" id="valor" step="0.01" class="w-full bg-dark/50 border border-slate rounded-xl p-3 focus:border-brand outline-none text-sm" placeholder="0,00" required>
+                            <select id="tipo" class="w-full bg-dark/50 border border-slate rounded-xl p-3 focus:border-brand outline-none text-sm">
+                                <option value="saida">Saída</option>
+                                <option value="entrada">Entrada</option>
+                            </select>
+                        </div>
+                        <select id="categoria" class="w-full bg-dark/50 border border-slate rounded-xl p-3 focus:border-brand outline-none text-sm">
+                            <option>Alimentação</option><option>Lazer</option><option>Saúde</option>
+                            <option>Transporte</option><option>Faturas</option><option>Salário</option>
+                        </select>
+                        <input type="date" id="data" class="w-full bg-dark/50 border border-slate rounded-xl p-3 focus:border-brand outline-none text-sm" required>
+                        <button type="submit" class="w-full bg-brand text-dark font-extrabold p-4 rounded-xl hover:bg-emerald-400 transition-all active:scale-95">ADICIONAR</button>
+                    </form>
+                </div>
+
+                <div class="lg:col-span-2 glass rounded-3xl overflow-hidden flex flex-col">
+                    <div class="p-6 border-b border-slate bg-white/5 flex justify-between items-center font-bold">Histórico de Transações</div>
+                    <div class="overflow-y-auto h-[500px] custom-scrollbar">
+                        <table class="w-full text-left border-collapse">
+                            <thead class="text-[10px] text-gray-500 uppercase sticky top-0 bg-[#161B22] z-10">
+                                <tr>
+                                    <th class="p-5">Transação</th>
+                                    <th class="p-5">Data</th>
+                                    <th class="p-5 text-right">Valor</th>
+                                    <th class="p-5 text-center">Ação</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transaction-list" class="divide-y divide-slate/30"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-reports" class="tab-content hidden space-y-8">
+            <h2 class="text-3xl font-extrabold">Inteligência Financeira</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <div class="glass p-8 rounded-3xl min-h-[400px]">
+                    <h3 class="text-sm font-bold text-gray-500 uppercase mb-6">Gastos por Categoria</h3>
+                    <canvas id="categoryChart"></canvas>
+                </div>
+                <div class="glass p-8 rounded-3xl min-h-[400px]">
+                    <h3 class="text-sm font-bold text-gray-500 uppercase mb-6">Fluxo de Caixa</h3>
+                    <canvas id="flowChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <div id="delete-modal" class="fixed inset-0 bg-dark/80 backdrop-blur-sm z-50 flex items-center justify-center hidden opacity-0 transition-opacity duration-300">
+        <div class="glass p-8 rounded-3xl max-w-sm w-full border border-slate shadow-2xl transform scale-95 transition-transform duration-300 text-center">
+            <div class="bg-expense/10 text-expense w-16 h-16 rounded-2xl flex items-center justify-center mb-6 mx-auto">
+                <i data-lucide="alert-triangle" class="w-8 h-8"></i>
+            </div>
+            <h3 class="text-xl font-bold mb-2">Excluir Lançamento?</h3>
+            <p class="text-gray-400 text-sm mb-8">Esta ação não pode ser desfeita.</p>
+            <div class="flex gap-4">
+                <button onclick="closeDeleteModal()" class="flex-1 bg-slate py-3 rounded-xl">Cancelar</button>
+                <button id="confirm-delete-btn" class="flex-1 bg-expense py-3 rounded-xl font-bold">Excluir</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="renderer.js"></script>
+    <script>
+        lucide.createIcons();
+        const options = { day: 'numeric', month: 'long', year: 'numeric' };
+        document.getElementById('current-date').innerText = new Date().toLocaleDateString('pt-BR', options);
+    </script>
+</body>
+</html>

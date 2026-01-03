@@ -1,0 +1,28 @@
+# Dependências
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Banco de Dados Local (Dados Sensíveis)
+*.db
+*.db-journal
+*.sqlite
+
+# Compilação e Build do Electron
+dist/
+release/
+*.exe
+*.dmg
+*.AppImage
+*.deb
+
+# Arquivos de Sistema e IDE
+.DS_Store
+.vscode/
+.idea/
+Thumbs.db
+
+# Logs do Sistema
+logs/
+*.log
